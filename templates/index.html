@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Contact Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74EBD5, #042ee9);
+            min-height: 100vh;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 30px 0;
+            color: #0056b3;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+        }
+
+        /* ✅ Fixed header visibility */
+        th {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+            transition: all 0.3s;
+        }
+
+        .btn {
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: black;
+        }
+
+        .btn-edit:hover {
+            background: #e0a800;
+        }
+
+        .form-control {
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 8px #28a745;
+        }
+
+        .logout-btn {
+            display: block;
+            margin: 20px auto;
+            width: 150px;
+            background: #dc3545;
+            color: white;
+            border-radius: 25px;
+            text-align: center;
+            padding: 10px 0;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2>Contact Book 📚</h2>
+
+        <!-- Search & Filter Form -->
+        <form method="GET" action="/index" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search..."
+                        value="{{ search_term }}">
+                </div>
+
+                <div class="col-md-4 col-lg-3">
+                    <select name="filter_by" class="form-select">
+                        <option value="" disabled selected>Filter By</option>
+                        <option value="name" {% if filter_by=='name' %}selected{% endif %}>Name</option>
+                        <option value="phone" {% if filter_by=='phone' %}selected{% endif %}>Phone</option>
+                        <option value="email" {% if filter_by=='email' %}selected{% endif %}>Email</option>
+                        <option value="address" {% if filter_by=='address' %}selected{% endif %}>Address</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{{ url_for('add_contact') }}" class="btn btn-add w-100">➕ Add Contact</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Display Contacts -->
+        <div class="table-responsive mt-5">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                    <tr>
+                        <td>{{ contact['name'] }}</td>
+                        <td>{{ contact['phone'] }}</td>
+                        <td>{{ contact['email'] }}</td>
+                        <td>{{ contact['address'] }}</td>
+                        <td>
+                            <a href="{{ url_for('edit', contact_id=contact['_id']) }}"
+                                class="btn btn-edit btn-sm">Edit</a>
+                            <a href="{{ url_for('delete', contact_id=contact['_id']) }}"
+                                class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
