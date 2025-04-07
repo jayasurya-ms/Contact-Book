@@ -1,191 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Book</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #74EBD5, #042ee9);
-            min-height: 100vh;
-            color: #333;
-            font-family: Arial, sans-serif;
+        .contact-card {
+            transition: transform 0.3s;
         }
-
-        h2 {
-            text-align: center;
-            margin: 30px 0;
-            color: #0056b3;
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-
-        .container {
-            max-width: 1100px;
-            margin: auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 12px;
-        }
-
-        /* ✅ Fixed header visibility */
-        th {
-            background-color: #007bff !important;
-            color: white !important;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: #f1f1f1;
-            transition: all 0.3s;
-        }
-
-        .btn {
-            transition: all 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
-
-        .btn-add {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-add:hover {
-            background: #218838;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .btn-edit {
-            background: #ffc107;
-            color: black;
-        }
-
-        .btn-edit:hover {
-            background: #e0a800;
-        }
-
-        .form-control {
-            transition: all 0.3s;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 8px #28a745;
-        }
-
-        .logout-btn {
-            display: block;
-            margin: 20px auto;
-            width: 150px;
-            background: #dc3545;
-            color: white;
-            border-radius: 25px;
-            text-align: center;
-            padding: 10px 0;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #c82333;
-            transform: scale(1.05);
+        .required-field::after {
+            content: " *";
+            color: red;
         }
     </style>
 </head>
-
 <body>
-
-    <div class="container mt-5">
-        <h2>Contact Book 📚</h2>
-
-        <!-- Search & Filter Form -->
-        <form method="GET" action="/index" class="mb-4">
-            <div class="row g-3">
-                <div class="col-md-6 col-lg-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search..."
-                        value="{{ search_term }}">
-                </div>
-
-                <div class="col-md-4 col-lg-3">
-                    <select name="filter_by" class="form-select">
-                        <option value="" disabled selected>Filter By</option>
-                        <option value="name" {% if filter_by=='name' %}selected{% endif %}>Name</option>
-                        <option value="phone" {% if filter_by=='phone' %}selected{% endif %}>Phone</option>
-                        <option value="email" {% if filter_by=='email' %}selected{% endif %}>Email</option>
-                        <option value="address" {% if filter_by=='address' %}selected{% endif %}>Address</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Search</button>
-                </div>
-
-                <div class="col-md-2">
-                    <a href="{{ url_for('add_contact') }}" class="btn btn-add w-100">➕ Add Contact</a>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-address-book me-2"></i>Contact Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_contact') }}">Add Contact</a>
+                    </li>
+                </ul>
+                <form class="d-flex" action="{{ url_for('search') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="query" placeholder="Search contacts..." value="{{ search_query if search_query else '' }}">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
             </div>
-        </form>
+        </div>
+    </nav>
 
-        <!-- Display Contacts -->
-        <div class="table-responsive mt-5">
-            <table class="table table-hover table-striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Address</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for contact in contacts %}
-                    <tr>
-                        <td>{{ contact['name'] }}</td>
-                        <td>{{ contact['phone'] }}</td>
-                        <td>{{ contact['email'] }}</td>
-                        <td>{{ contact['address'] }}</td>
-                        <td>
-                            <a href="{{ url_for('edit', contact_id=contact['_id']) }}"
-                                class="btn btn-edit btn-sm">Edit</a>
-                            <a href="{{ url_for('delete', contact_id=contact['_id']) }}"
-                                class="btn btn-danger btn-sm">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-5">
+                    <i class="fas fa-address-book me-2"></i>My Contacts
+                </h1>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <a href="{{ url_for('add_contact') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Add New Contact
+                </a>
+            </div>
         </div>
 
-        <a href="/logout" class="logout-btn">Logout</a>
+        {% if contacts|length > 0 %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for contact in contacts %}
+            <div class="col">
+                <div class="card h-100 contact-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ contact.name }}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-phone me-2"></i>{{ contact.phone_number }}
+                        </p>
+                        {% if contact.email %}
+                        <p class="card-text">
+                            <i class="fas fa-envelope me-2"></i>{{ contact.email }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{{ url_for('view_contact', id=contact._id) }}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_contact', id=contact._id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('delete_contact', id=contact._id) }}" class="btn btn-outline-danger" 
+                               onclick="return confirm('Are you sure you want to delete this contact?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-address-book fa-4x mb-3 text-muted"></i>
+            <h3 class="text-muted">No contacts found</h3>
+            {% if search_query %}
+            <p class="text-muted">No results for "{{ search_query }}"</p>
+            <a href="{{ url_for('index') }}" class="btn btn-outline-primary mt-2">Clear Search</a>
+            {% else %}
+            <p class="text-muted">Start by adding a new contact</p>
+            <a href="{{ url_for('add_contact') }}" class="btn btn-primary mt-2">
+                <i class="fas fa-plus me-1"></i>Add New Contact
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-</body>
 
+    <footer class="bg-light text-center text-muted py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">Contact Book Application &copy; 2023</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
+
